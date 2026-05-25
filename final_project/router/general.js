@@ -122,4 +122,43 @@ public_users.get('/review/:isbn',function (req, res) {
   });
 });
 
+// Add or modify a book review (authenticated users)
+public_users.put('/review/:isbn', (req, res) => {
+  const isbn = req.params.isbn;
+  const review = req.body.review;
+  
+  // Check if user is authenticated via session
+  if (!req.session.authorization) {
+    return res.status(403).json({message: "User not logged in"});
+  }
+  
+  const username = req.session.authorization.username;
+  
+  if (!review) {
+    return res.status(400).json({message: "Review text is required"});
+  }
+  
+  // Add or update the review for this user
+  books[isbn].reviews[username] = review;
+  return res.status(200).json({message: "Review successfully added/updated"});
+});
+
+// Delete a book review (authenticated users)
+public_users.delete('/review/:isbn', (req, res) => {
+  const isbn = req.params.isbn;
+  
+  // Check if user is authenticated via session
+  if (!req.session.authorization) {
+    return res.status(403).json({message: "User not logged in"});
+  }
+  
+  const username = req.session.authorization.username;
+  
+  if (books[isbn].reviews[username]) {
+    delete books[isbn].reviews[username];
+    return res.status(200).json({message: "Review successfully deleted"});
+  }
+  return res.status(404).json({message: "Review not found"});
+});
+
 module.exports.general = public_users;
