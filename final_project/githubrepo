@@ -1,0 +1,11 @@
+﻿curl -s https://api.github.com/repos/Surabhi-MS/expressBookReviews
+
+{
+  "name": "expressBookReviews",
+  "full_name": "Surabhi-MS/expressBookReviews",
+  "fork": true,
+  "parent": {
+    "full_name": "ibm-developer-skills-network/expressBookReviews",
+    "html_url": "https://github.com/ibm-developer-skills-network/expressBookReviews"
+  }
+}
