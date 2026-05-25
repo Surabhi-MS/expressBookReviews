@@ -27,14 +27,14 @@ regd_users.post("/login", (req,res) => {
     req.session.authorization = {
       accessToken, username
     }
-    return res.status(200).json({message: "Customer successfully logged in", accessToken});
+    return res.status(200).json({message: "Login successful!"});
   }
   return res.status(208).json({message: "Invalid Login. Check username and password"});
 });
 
 // Add or modify a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-  const isbn = req.params.isbn;
+regd_users.put("/auth/review/:isbn?", (req, res) => {
+  const isbn = req.params.isbn || req.query.isbn;
   const review = req.body.review;
   const username = req.session.authorization.username;
 
@@ -48,8 +48,8 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 });
 
 // Delete a book review
-regd_users.delete("/auth/review/:isbn", (req, res) => {
-  const isbn = req.params.isbn;
+regd_users.delete("/auth/review/:isbn?", (req, res) => {
+  const isbn = req.params.isbn || req.query.isbn;
   const username = req.session.authorization.username;
 
   if (books[isbn].reviews[username]) {
