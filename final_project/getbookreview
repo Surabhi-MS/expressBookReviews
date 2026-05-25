@@ -1,0 +1,6 @@
+curl http://localhost:5000/review/1
+
+{
+    "testuser":  "Amazing book!",
+    "user2":  "Different perspective from user2"
+}

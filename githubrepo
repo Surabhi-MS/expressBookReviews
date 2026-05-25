@@ -1,0 +1,14 @@
+curl -s https://api.github.com/repos/Surabhi-MS/expressBookReviews
+{
+  "id": 1248847184,
+  "node_id": "R_kgDOSm_lUA",
+  "name": "expressBookReviews",
+  "full_name": "Surabhi-MS/expressBookReviews",
+  "private": false,
+  "html_url": "https://github.com/Surabhi-MS/expressBookReviews",
+  "fork": true,
+  "parent": {
+    "full_name": "ibm-developer-skills-network/expressBookReviews",
+    "html_url": "https://github.com/ibm-developer-skills-network/expressBookReviews"
+  }
+}
