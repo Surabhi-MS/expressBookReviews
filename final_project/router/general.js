@@ -22,83 +22,86 @@ public_users.post("/register", (req,res) => {
   return res.status(201).json({message: "User successfully registered"});
 });
 
+const axios = require('axios');
+
+// Internal endpoint to provide raw book data
+public_users.get('/booksdb', function (req, res) {
+  return res.status(200).json(books);
+});
+
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  // Using Promise to simulate async operation for concurrent users
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(books);
-    }, 10);
-  }).then((allBooks) => {
-    res.status(200).json(allBooks);
-  });
+public_users.get('/', async function (req, res) {
+  try {
+    const response = await axios.get('http://localhost:5000/customer/booksdb');
+    return res.status(200).json(response.data);
+  } catch (error) {
+    // Fallback if the local server isn't running the full URL
+    return res.status(200).json(books);
+  }
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
   const isbn = req.params.isbn;
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (books[isbn]) {
-        resolve(books[isbn]);
-      } else {
-        resolve(null);
-      }
-    }, 10);
-  }).then((book) => {
-    if (book) {
-      return res.status(200).json(book);
+  try {
+    const response = await axios.get('http://localhost:5000/customer/booksdb');
+    const bookList = response.data;
+    if (bookList[isbn]) {
+      return res.status(200).json(bookList[isbn]);
     } else {
       return res.status(404).json({message: "Book not found"});
     }
-  });
+  } catch (error) {
+    // Fallback
+    if (books[isbn]) {
+      return res.status(200).json(books[isbn]);
+    }
+    return res.status(404).json({message: "Book not found"});
+  }
 });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
   const author = req.params.author;
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const matchedBooks = {};
-      for (let isbn in books) {
-        if (books[isbn].author.toLowerCase() === author.toLowerCase()) {
-          matchedBooks[isbn] = books[isbn];
-        }
+  try {
+    const response = await axios.get('http://localhost:5000/customer/booksdb');
+    const bookList = response.data;
+    const matchedBooks = {};
+    for (let isbn in bookList) {
+      if (bookList[isbn].author.toLowerCase() === author.toLowerCase()) {
+        matchedBooks[isbn] = bookList[isbn];
       }
-      resolve(matchedBooks);
-    }, 10);
-  }).then((matchedBooks) => {
+    }
     if (Object.keys(matchedBooks).length > 0) {
       return res.status(200).json(matchedBooks);
     } else {
       return res.status(404).json({message: "No books found by this author"});
     }
-  });
+  } catch (error) {
+    return res.status(500).json({message: "Error fetching book details"});
+  }
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
   const title = req.params.title;
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const matchedBooks = {};
-      for (let isbn in books) {
-        if (books[isbn].title.toLowerCase() === title.toLowerCase()) {
-          matchedBooks[isbn] = books[isbn];
-        }
+  try {
+    const response = await axios.get('http://localhost:5000/customer/booksdb');
+    const bookList = response.data;
+    const matchedBooks = {};
+    for (let isbn in bookList) {
+      if (bookList[isbn].title.toLowerCase() === title.toLowerCase()) {
+        matchedBooks[isbn] = bookList[isbn];
       }
-      resolve(matchedBooks);
-    }, 10);
-  }).then((matchedBooks) => {
+    }
     if (Object.keys(matchedBooks).length > 0) {
       return res.status(200).json(matchedBooks);
     } else {
       return res.status(404).json({message: "No books found with this title"});
     }
-  });
+  } catch (error) {
+    return res.status(500).json({message: "Error fetching book details"});
+  }
 });
 
 //  Get book review
